@@ -1,3 +1,7 @@
 module.exports = {
-    "extends": "standard"
-};
+    root: true,
+    extends: 'standard',
+    rules: {
+      'no-var': 2
+    }
+}
