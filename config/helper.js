@@ -1,8 +1,12 @@
-export async function tryCatch (promise) {
+const tryCatch = (promise) => {
   try {
-    const ret = await promise
+    const ret = promise
     return [ret, null]
   } catch (e) {
     return [null, e]
   }
+}
+
+module.exports = {
+  tryCatch: tryCatch
 }

@@ -1,13 +1,13 @@
 const mysql = require('mysql')
-export const pool = mysql.createPool({
-  connectionLimit: 100,
+const pool = mysql.createPool({
+  connectionLimit: 10,
   host: 'localhost',
   user: 'nwpu',
-  password: 'nwpuorder',
-  database: 'Nwpu2015303320'
+  password: 'Npu2015303320',
+  database: 'nwpuorder'
 })
 
-export function query (connection, queryStr, inputs) {
+function query (connection, queryStr, inputs) {
   return new Promise(function (resolve, reject) {
     connection.query(queryStr, inputs, function (error, results) {
       if (error) {
@@ -17,4 +17,9 @@ export function query (connection, queryStr, inputs) {
       }
     })
   })
+}
+
+module.exports = {
+  pool: pool,
+  query: query
 }
