@@ -7,6 +7,12 @@ const pool = mysql.createPool({
     database: 'nwpuorder'
 })
 
+/**
+ * 数据库执行操作
+ * @param {connection} connection 提供给数据库查询的connection
+ * @param {String} queryStr 需要执行的sql语句
+ * @param {Array} inputs sql语句里面需要替换的数据
+ */
 function query (connection, queryStr, inputs) {
     return new Promise(function (resolve, reject) {
         connection.query(queryStr, inputs, function (error, results) {
