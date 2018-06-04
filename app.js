@@ -15,6 +15,7 @@ const login = require('./routes/login')
 onerror(app)
 
 // middlewares
+app.use(bodyparser.json())
 app.use(bodyparser({
     enableTypes: ['json', 'form', 'text']
 }))
