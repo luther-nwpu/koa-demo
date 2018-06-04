@@ -80,9 +80,7 @@ const decryptData = (encryptedData, sessionKey, iv, appId) => {
     } catch (err) {
         throw err
     }
-
     if (decoded.watermark.appid !== appId) {
-        console.log('---------------------------------6')
         throw new Error('Illegal Buffer')
     }
     return decoded
