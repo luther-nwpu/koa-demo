@@ -21,6 +21,8 @@
     "koa-onerror": "^4.0.0",
     "koa-router": "^7.1.1",
     "mysql": "^2.15.0",
+    "request": "^2.87.0",
+    "safe-buffer": "^5.1.2",
     "superagent": "^3.8.3"
   },
   "devDependencies": {
