@@ -14,7 +14,7 @@ const pool = mysql.createPool({
  * @param {Array} inputs sql语句里面需要替换的数据
  */
 function query (connection, queryStr, inputs) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
         connection.query(queryStr, inputs, function (error, results) {
             if (error) {
                 reject(error)
