@@ -4,12 +4,12 @@ const helper = require('../config/helper')
 router.prefix('/users')
 
 router.post('/', async (ctx, next) => {
-    const req = ctx.query
+    const req = ctx.request.body
     try {
-        const userinfo = helper.privateData(req.code, req.appId, req.appKey)
+        const userinfo = await helper.privateData(req.code, req.appId, req.appKey)
         console.log('encryptedData', req.encryptedData)
-        console.log('userinfo', userinfo.session_key)
-        console.log('appId', userinfo.appId)
+        console.log('userinfo', userinfo)
+        console.log('appId', req.appId)
         console.log('iv', req.iv)
         const users = helper.decryptData(req.encryptedData, userinfo.session_key, req.iv, req.appId)
         console.log(users)
