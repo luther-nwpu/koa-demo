@@ -1,15 +1,18 @@
 const router = require('koa-router')()
+const helper = require('../config/helper')
 
 router.prefix('/users')
 
-router.get('/', function (ctx, next) {
-    console.log(ctx.state)
-    ctx.body = 'this is a users response!'
-})
-
-router.post('/', function (ctx, next) {
-    console.log(ctx.state)
-    ctx.body = 'this is a users response!'
+router.post('/', async (ctx, next) => {
+    const req = ctx.query
+    try {
+        const userinfo = helper.privateData(req.code, req.appId, req.appKey)
+        const users = helper.decryptData(req.appId, userinfo.session_key, req.encryptedData, req.iv)
+        console.log(users)
+    } catch (error) {
+        console.error(error)
+        next(error)
+    }
 })
 
 router.get('/bar', function (ctx, next) {
