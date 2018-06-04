@@ -7,7 +7,7 @@ router.post('/', async (ctx, next) => {
     const req = ctx.query
     try {
         const userinfo = helper.privateData(req.code, req.appId, req.appKey)
-        const users = helper.decryptData(req.appId, userinfo.session_key, req.encryptedData, req.iv)
+        const users = helper.decryptData(req.encryptedData, userinfo.session_key, req.iv, req.appId)
         console.log(users)
     } catch (error) {
         console.error(error)
