@@ -47,7 +47,8 @@ router.post('/', async (ctx, next) => {
             const [queryRes, error6] = helper.tryCatch(await db.query(connection, `select user_id, wx_openid, wx_info, stuid, createTime, updateTime from users where user_id = ?`, [userId]))
             if (error6) { reject(error6) }
             const token = jwt.productToken(userId)
-            resolve({ token: token, sessionToken: queryRes })
+            if (queryRes.length === 0) { reject(helper.createError('No This User', 500, '用户登录失败')) }
+            resolve({ token: token, userInfo: queryRes[0] })
             connection.release()
         })
     }))
@@ -55,23 +56,32 @@ router.post('/', async (ctx, next) => {
     ctx.body = res
 })
 
-router.post('/bar', async (ctx, next) => {
-    const testData = {
-        zhanglu: 'zhanglu'
+const getOpenId = async (code, appId, appKey, encryptedData, iv) => {
+    const userinfo = await helper.privateData(code, appId, appKey)
+    return {
+        openid: userinfo.openId
     }
-    db.pool.getConnection(async (error, connection) => {
-        if (error) {
-            console.log(error)
-            next(error)
-        }
-        const [, error0] = helper.tryCatch(await db.query(connection, `insert into json(json) values(?)`, [JSON.stringify(testData)]))
-        if (error0) {
-            console.log(error0)
-            next(error0)
-        }
-        connection.release()
-    })
-    ctx.body = 'this is a users/bar response'
+}
+router.post('/session', async (ctx, next) => {
+    const req = ctx.request.body
+    const [res, error0] = helper.tryCatch(await new Promise(async(resolve, reject) => {
+        const [userres, error1] = helper.tryCatch(await getOpenId(req.code, req.appId, req.appKey))
+        if (error1) { reject(error1) }
+
+        db.pool.getConnection(async (error2, connection) => {
+            if (error2) { reject(error2) }
+            const [existRes, error3] = helper.tryCatch(await db.query(connection, `select user_id, wx_openid, wx_info, stuid, createTime, updateTime from users where wx_openid = ?`, [userres[0].openid]))
+            if (error3) { reject(error3) }
+            if (existRes.length !== 1) {
+                reject(helper.createError('sessions no User', 500, '没有该用户'))
+            }
+            const token = jwt.productToken(existRes[0].user_id)
+            resolve({ token: token, userInfo: existRes[0] })
+            connection.release()
+        })
+    }))
+    if (error0) { next(error0) }
+    ctx.body = res
 })
 
 module.exports = router
