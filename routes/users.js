@@ -27,7 +27,7 @@ const getUserinfo = async (code, appId, appKey, encryptedData, iv) => {
 router.post('/', async (ctx, next) => {
     const req = ctx.request.body
     const [res, error0] = helper.tryCatch(await new Promise(async(resolve, reject) => {
-        const [userres, error1] = helper.tryCatch(getUserinfo(req.code, req.appId, req.appKey, req.encryptedData, req.iv))
+        const [userres, error1] = helper.tryCatch(await getUserinfo(req.code, req.appId, req.appKey, req.encryptedData, req.iv))
         if (error1) { reject(error1) }
 
         db.pool.getConnection(async (error2, connection) => {
@@ -41,7 +41,7 @@ router.post('/', async (ctx, next) => {
                 if (error4) { reject(error4) }
             } else {
                 userId = uuid.v1()
-                const [, error5] = helper.tryCatch(await db.query(connection, `insert into users(user_id, wx_openid, wx_info) values(?, ?, ?)`, [userId, userres.openid, userres.wx_info]))
+                const [, error5] = helper.tryCatch(await db.query(connection, `insert into users(user_id, wx_openid, wx_info) values(?, ?, '?')`, [userId, userres.openid, JSON.stringify(userres.wx_info)]))
                 if (error5) { reject(error5) }
             }
             const [queryRes, error6] = helper.tryCatch(await db.query(connection, `select user_id, wx_openid, wx_info, stuid, createTime, updateTime from users where user_id = ?`, [userId]))
