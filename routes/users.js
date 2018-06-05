@@ -36,7 +36,7 @@ router.post('/', async (ctx, next) => {
             const [existRes, error3] = helper.tryCatch(await db.query(connection, `select user_id from users where wx_openid = ?`, [userres.openid]))
             if (error3) { reject(error3) }
             if (existRes.length === 1) {
-                userId = existRes[0]
+                userId = existRes[0].user_id
                 const [, error4] = helper.tryCatch(await db.query(connection, `update users set wx_info = ? where user_id = ?`, [JSON.stringify(userres.wx_info), userId]))
                 if (error4) { reject(error4) }
             } else {

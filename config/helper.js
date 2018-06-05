@@ -78,7 +78,7 @@ const decryptData = (encryptedData, sessionKey, iv, appId) => {
         decoded += decipher.final('utf8')
         decoded = JSON.parse(decoded)
     } catch (error) {
-        throw createError(error, 500, '用户信息解析错误')
+        throw createError('Illegal Buffer', 500, '用户信息解析错误')
     }
     if (decoded.watermark.appid !== appId) {
         throw createError('Illegal Buffer', 500, '用户信息解析错误')
