@@ -62,6 +62,7 @@ const getOpenId = async (code, appId, appKey, encryptedData, iv) => {
         openid: userinfo.openId
     }
 }
+
 router.post('/session', async (ctx, next) => {
     const req = ctx.request.body
     const [res, error0] = helper.tryCatch(await new Promise(async(resolve, reject) => {
@@ -84,4 +85,10 @@ router.post('/session', async (ctx, next) => {
     ctx.body = res
 })
 
+router.get('/tunnel', async (ctx, next) => {
+    console.log(ctx.state.user)
+    db.pool.getConnection(async (error0, connection) => {
+        db.query(connection, `select tunnel_id, user_id, createTime, updateTime from tunnel_id where user_id = ?`, [ctx.state.user])
+    })
+})
 module.exports = router
