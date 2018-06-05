@@ -37,11 +37,11 @@ router.post('/', async (ctx, next) => {
             if (error3) { reject(error3) }
             if (existRes.length === 1) {
                 userId = existRes[0]
-                const [, error4] = helper.tryCatch(await db.query(connection, `update users set wx_info = ? where user_id = ?`, [userres.wx_info, userId]))
+                const [, error4] = helper.tryCatch(await db.query(connection, `update users set wx_info = ? where user_id = ?`, [JSON.stringify(userres.wx_info), userId]))
                 if (error4) { reject(error4) }
             } else {
                 userId = uuid.v1()
-                const [, error5] = helper.tryCatch(await db.query(connection, `insert into users(user_id, wx_openid, wx_info) values(?, ?, '?')`, [userId, userres.openid, JSON.stringify(userres.wx_info)]))
+                const [, error5] = helper.tryCatch(await db.query(connection, `insert into users(user_id, wx_openid, wx_info) values(?, ?, ?)`, [userId, userres.openid, JSON.stringify(userres.wx_info)]))
                 if (error5) { reject(error5) }
             }
             const [queryRes, error6] = helper.tryCatch(await db.query(connection, `select user_id, wx_openid, wx_info, stuid, createTime, updateTime from users where user_id = ?`, [userId]))
@@ -55,7 +55,22 @@ router.post('/', async (ctx, next) => {
     ctx.body = res
 })
 
-router.get('/bar', function (ctx, next) {
+router.post('/bar', async (ctx, next) => {
+    const testData = {
+        zhanglu: 'zhanglu'
+    }
+    db.pool.getConnection(async (error, connection) => {
+        if (error) {
+            console.log(error)
+            next(error)
+        }
+        const [, error0] = helper.tryCatch(await db.query(connection, `insert into json(json) values(?)`, [JSON.stringify(testData)]))
+        if (error0) {
+            console.log(error0)
+            next(error0)
+        }
+        connection.release()
+    })
     ctx.body = 'this is a users/bar response'
 })
 
