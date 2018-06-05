@@ -3,7 +3,7 @@ const db = require('../config/db')
 const helper = require('../config/helper')
 
 router.get('/test', async (ctx, next) => {
-    const res = await new Promise(function (resolve, reject) {
+    const res = await new Promise((resolve, reject) => {
         db.pool.getConnection(async (error, connection) => {
             if (error) {
                 reject(error)
