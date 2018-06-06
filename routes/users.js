@@ -71,6 +71,7 @@ router.post('/session', async (ctx, next) => {
 
         db.pool.getConnection(async (error2, connection) => {
             if (error2) { reject(error2) }
+            console.log(userres)
             const [existRes, error3] = helper.tryCatch(await db.query(connection, `select user_id, wx_openid, wx_info, stuid, createTime, updateTime from users where wx_openid = ?`, [userres[0].openid]))
             if (error3) { reject(error3) }
             if (existRes.length !== 1) {
