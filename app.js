@@ -4,15 +4,26 @@ const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
-const koaJwt = require('koa-jwt')
-const secret = 'Npu2015303320'
-
 const index = require('./routes/index')
 const users = require('./routes/users')
 const login = require('./routes/login')
-
+const jwt = require('./config/jwt')
 // error handler
 onerror(app)
+const colors = require('colors')
+
+colors.setTheme({
+    silly: 'rainbow',
+    input: 'grey',
+    verbose: 'cyan',
+    prompt: 'grey',
+    info: 'green',
+    data: 'grey',
+    help: 'cyan',
+    warn: 'yellow',
+    debug: 'blue',
+    error: 'red'
+})
 
 // middlewares
 app.use(bodyparser({
@@ -29,16 +40,17 @@ app.use(async (ctx, next) => {
     console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
 })
 
-app.use(koaJwt({'secret': secret}).unless({ path: [/^\/users/] }))
-
+app.use(async (ctx, next) => {
+    await jwt.KoaJwt(ctx, next)
+})
 // routes
 app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
 app.use(login.routes(), login.allowedMethods())
 
 // error-handling
-app.on('error', (err, ctx) => {
-    console.error('server error', err, ctx)
+app.on('error', err => {
+    console.error(colors.error(err.stack))
 })
 
 module.exports = app

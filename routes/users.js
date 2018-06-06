@@ -52,7 +52,7 @@ router.post('/', async (ctx, next) => {
             connection.release()
         })
     }))
-    if (error0) { next(error0) }
+    if (error0) { throw error0 }
     ctx.body = res
 })
 
@@ -84,14 +84,11 @@ router.post('/session', async (ctx, next) => {
             connection.release()
         })
     }))
-    if (error0) { next(error0) }
+    if (error0) { throw error0 }
     ctx.body = res
 })
 
 router.get('/tunnel', async (ctx, next) => {
-    console.log(ctx.state.user)
-    db.pool.getConnection(async (error0, connection) => {
-        db.query(connection, `select tunnel_id, user_id, createTime, updateTime from tunnel_id where user_id = ?`, [ctx.state.user])
-    })
+    ctx.body = '我喜欢姚菊'
 })
 module.exports = router
