@@ -74,9 +74,11 @@ router.post('/session', async (ctx, next) => {
             console.log(userres)
             const [existRes, error3] = helper.tryCatch(await db.query(connection, `select user_id, wx_openid, wx_info, stuid, createTime, updateTime from users where wx_openid = ?`, [userres[0].openid]))
             if (error3) { reject(error3) }
+
             if (existRes.length !== 1) {
                 reject(helper.createError('sessions no User', 500, '没有该用户'))
             }
+
             const token = jwt.productToken(existRes[0].user_id)
             resolve({ token: token, userInfo: existRes[0] })
             connection.release()
