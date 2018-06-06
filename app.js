@@ -41,7 +41,8 @@ app.use(async (ctx, next) => {
 })
 
 app.use(async (ctx, next) => {
-    await jwt.KoaJwt(ctx, next)
+    await jwt.KoaJwt(ctx)
+    await next()
 })
 // routes
 app.use(index.routes(), index.allowedMethods())

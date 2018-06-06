@@ -6,9 +6,9 @@ const productToken = (userinfo) => {
     return jwt.sign({data: userinfo}, secret, { expiresIn: tokenMaxage })
 }
 
-const UnAuthorizationUrl = new Set(['GET:/users/session'])
+const UnAuthorizationUrl = new Set(['GET:/users/session', 'POST:/users', 'GET:/test'])
 
-const KoaJwt = async (ctx, next) => {
+const KoaJwt = async (ctx) => {
     try {
         if (!UnAuthorizationUrl.has(ctx.method + ':' + ctx.url)) {
             if (ctx.request.header.authorization && ctx.request.header.authorization.split(' ')[0] === 'Bearer') {
@@ -20,10 +20,9 @@ const KoaJwt = async (ctx, next) => {
                         resolve(decoded)
                     })
                 })
-                ctx.state.userinfo = decoded.data
+                ctx.state.userId = decoded.data
             }
         }
-        next()
     } catch (err) {
         throw createError(new Error('UnAuthorization'), 505, '用户未登录')
     }
