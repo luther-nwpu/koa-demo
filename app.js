@@ -29,7 +29,7 @@ app.use(async (ctx, next) => {
     console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
 })
 
-app.use(koaJwt({'secret': secret}).unless({ path: [/^\/users/] }))
+app.use(koaJwt({'secret': secret}).unless({ path: ['/users', '/users/session'] }))
 
 // routes
 app.use(index.routes(), index.allowedMethods())
